@@ -40,7 +40,8 @@ for line in sys.stdin:
             high, low = findHLDensityRegions(region_cnt)
             regions_high_density.intersection_update(high)
             regions_low_density.intersection_update(low)
-        current_hour = {region: value}
+        region_cnt = {region: value}
+        current_hour = hour
 
 if current_hour:
     high, low = findHLDensityRegions(region_cnt)
