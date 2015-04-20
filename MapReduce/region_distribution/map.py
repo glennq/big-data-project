@@ -58,14 +58,6 @@ def readNeighborhood(shapeFilename, index, neighborhoods):
     neighborhoods.append(('UNKNOWN', None))
 
 
-def parseInput():
-    for line in sys.stdin:
-        line = line.strip('\n')
-        values = line.split(',')
-        if len(values) > 1 and values[0] != 'medallion': 
-            yield values
-
-
 def mapper():
     index = rtree.Index()
     neighborhoods = []
