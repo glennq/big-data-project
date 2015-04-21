@@ -40,12 +40,18 @@ for line in sys.stdin:
     row = line.strip().split(',')
     if row[0] == 'medallion':
         continue
+    try:
+        pu_loc = (float(row[10]), float(row[11]))
+        do_loc = (float(row[12]), float(row[13]))
+    except:
+        continue
+    if pu_loc[0] == 0 or pu_loc[1] == 0 or do_loc[0] == 0 or do_loc[1] == 0:
+        continue
+
     pu_time_h = datetime.strptime(row[5], '%Y-%m-%d %H:%M:%S').hour
-    pu_loc = (float(row[10]), float(row[11]))
     pu_region = neighborhoods[findNeighborhood(pu_loc, index,
                                                neighborhoods)][0]
     do_time_h = datetime.strptime(row[6], '%Y-%m-%d %H:%M:%S').hour
-    do_loc = (float(row[12]), float(row[13]))
     do_region = neighborhoods[findNeighborhood(do_loc, index,
                                                neighborhoods)][0]
     print "%d\t%s,%s" % (pu_time_h, pu_region, '1')
