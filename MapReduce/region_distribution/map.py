@@ -67,34 +67,35 @@ def mapper():
         line = line.strip('\n')
         values = line.split(',')
         if len(values) > 1 and values[0] != 'medallion': 
+            try:
+                pickup_location = (float(values[10]), float(values[11]))
+                pickup_neighborhood = findNeighborhood(pickup_location, index, neighborhoods, 0)
+                
+                dropoff_location = (float(values[12])), float(values[13])
+                dropoff_neighborhood = findNeighborhood(dropoff_location, index, neighborhoods, 0)
 
-            pickup_location = (float(values[10]), float(values[11]))
-            pickup_neighborhood = findNeighborhood(pickup_location, index, neighborhoods, 0)
-            
-            dropoff_location = (float(values[12])), float(values[13])
-            dropoff_neighborhood = findNeighborhood(dropoff_location, index, neighborhoods, 0)
+                pickup_year = datetime.strptime(values[5], '%Y-%m-%d %H:%M:%S').year
+                pickup_month = datetime.strptime(values[5], '%Y-%m-%d %H:%M:%S').month
+                pickup_day = datetime.strptime(values[5], '%Y-%m-%d %H:%M:%S').day
+                pickup_hour = datetime.strptime(values[5], '%Y-%m-%d %H:%M:%S').hour
+                pickup_weekday = date(pickup_year, pickup_month, pickup_day).isoweekday()
 
-            pickup_year = datetime.strptime(values[5], '%Y-%m-%d %H:%M:%S').year
-            pickup_month = datetime.strptime(values[5], '%Y-%m-%d %H:%M:%S').month
-            pickup_day = datetime.strptime(values[5], '%Y-%m-%d %H:%M:%S').day
-            pickup_hour = datetime.strptime(values[5], '%Y-%m-%d %H:%M:%S').hour
-            pickup_weekday = date(pickup_year, pickup_month, pickup_day).isoweekday()
+                dropoff_year = datetime.strptime(values[6], '%Y-%m-%d %H:%M:%S').year
+                dropoff_month = datetime.strptime(values[6], '%Y-%m-%d %H:%M:%S').month
+                dropoff_day = datetime.strptime(values[6], '%Y-%m-%d %H:%M:%S').day
+                dropoff_hour = datetime.strptime(values[6], '%Y-%m-%d %H:%M:%S').hour
+                dropoff_weekday = date(dropoff_year, dropoff_month, dropoff_day).isoweekday()
 
-            dropoff_year = datetime.strptime(values[6], '%Y-%m-%d %H:%M:%S').year
-            dropoff_month = datetime.strptime(values[6], '%Y-%m-%d %H:%M:%S').month
-            dropoff_day = datetime.strptime(values[6], '%Y-%m-%d %H:%M:%S').day
-            dropoff_hour = datetime.strptime(values[6], '%Y-%m-%d %H:%M:%S').hour
-            dropoff_weekday = date(dropoff_year, dropoff_month, dropoff_day).isoweekday()
-
-            if pickup_neighborhood != -1:
-                pickupRegion = neighborhoods[pickup_neighborhood][0]
-                print "%s,%d,%d,%d,%d,%d\t%s\t%s" %(pickupRegion, pickup_year, pickup_month, pickup_day, pickup_hour, pickup_weekday, values[10], values[11])
-            
-            # if dropoff_neighborhood != -1:
-            #     dropoffRegion = neighborhoods[dropoff_neighborhood][0]
-            #     print "%s,%d,%d,%d,%d,%d\t%s\t%s" %(dropoffRegion, dropoff_year, dropoff_month, dropoff_day, dropoff_hour, dropoff_weekday, values[12], values[13])
-                #print '%s\t%s' dd% (neighborhoods[item[0]][0], item[1])
-
+                if pickup_neighborhood != -1:
+                    pickupRegion = neighborhoods[pickup_neighborhood][0]
+                    print "%s,%d,%d,%d,%d,%d\t%s\t%s" %(pickupRegion, pickup_year, pickup_month, pickup_day, pickup_hour, pickup_weekday, values[10], values[11])
+                
+                # if dropoff_neighborhood != -1:
+                #     dropoffRegion = neighborhoods[dropoff_neighborhood][0]
+                #     print "%s,%d,%d,%d,%d,%d\t%s\t%s" %(dropoffRegion, dropoff_year, dropoff_month, dropoff_day, dropoff_hour, dropoff_weekday, values[12], values[13])
+                    #print '%s\t%s' dd% (neighborhoods[item[0]][0], item[1])
+            except Exception:
+                pass
 
 if __name__ == '__main__':
     mapper()
