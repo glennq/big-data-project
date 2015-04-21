@@ -9,6 +9,6 @@ for j in range(1, 13):
     for i in range(1, 32):
         r = requests.get(url.format(j, i))
         data = r.text
-        f = open('201312'+str(i).zfill(2)+'.csv', 'a')
+        f = open('2013{:02}{:02}.csv'.format(j, i), 'wb')
         f.write(data)
         f.close()
