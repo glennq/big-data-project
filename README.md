@@ -7,8 +7,11 @@ Team members:
 - Yucheng Lu
 - Wenjia Wu
 
-Base code from
+Base code for webpages from
 https://github.com/mjhea0/thinkful-mentor/tree/master/python/jinja/flask_example
 and
 https://github.com/twbs/bootstrap/blob/master/docs/examples/dashboard,
-and used Bootstrap.
+
+Code for finding regions from https://github.com/ViDA-NYU/aws_taxi.
+
+Uses Bootstrap and Flask.
