@@ -13,7 +13,7 @@
             max-width: 700px;
     }
     h2 {
-	    color: red;
+      color: red;
     }
     </style>
   </head>
@@ -35,7 +35,7 @@
             {{ nav_link('home', 'Home') }}
             {{ nav_link('contact', 'Contact Us') }}
           </ul>
-	  <form class="navbar-form navbar-right">
+    <form class="navbar-form navbar-right">
             <input type="text" class="form-control" placeholder="Search...">
           </form>
         </div><!-- /.navbar-collapse -->
@@ -44,7 +44,7 @@
 
     <div class="container-fluid">
       <div class="row">    
-	<div class="col-sm-3 col-md-2 sidebar">
+  <div class="col-sm-3 col-md-2 sidebar">
           <ul class="nav nav-sidebar">
             <li class="active"><a href="#">Overview <span class="sr-only">(current)</span></a></li>
             <li><a href="#">Reports</a></li>
@@ -65,73 +65,23 @@
           </ul>
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-	  {% block heading %}
-		<h1>{% block page %}{% endblock %} - Flask Super Example</h1>
-		{% endblock %}
-		{% block content %}{% endblock %}
+    {% block heading %}
+    <h1>{% block page %}{% endblock %} - Flask Super Example</h1>
+    {% endblock %}
+    {% block content %}{% endblock %}
 
         </div>
-	<div class="footermine">
-		{% block footer %}
-		Watch! This will be added to my base and child templates using the super powerful super block!
-		<br>
-		<br>
-		<br>
-		{% endblock %}
-	</div>
+  <div class="footermine">
+    {% block footer %}
+    Watch! This will be added to my base and child templates using the super powerful super block!
+    <br>
+    <br>
+    <br>
+    {% endblock %}
+  </div>
       </div>
     </div>  
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script src="{{ url_for('static', filename='js/bootstrap.min.js')}}"></script>
-    <script src="{{url_for('static', filename='d3.min.js')}}"></script>
-<script>
-  var width  = 1000;
-  var height = 1000;
-  
-  var svg = d3.select("body").append("svg")
-      .attr("width", width)
-      .attr("height", height)
-      .append("g")
-      .attr("transform", "translate(0,0)");
-  
-  var projection = d3.geo.mercator()
-            .center([-74, 40.5])
-            .scale(50000)
-            .translate([width/2, height/2]);
-  
-  var path = d3.geo.path()
-          .projection(projection);
-  
-  
-  var color = d3.scale.category20();
-  
-  d3.json('static/assets/data/ny.json', function(error, root) {
-    
-    if (error) 
-      return console.error(error);
-    console.log(root.features);
-    
-    svg.selectAll("path")
-      .data( root.features )
-      .enter()
-      .append("path")
-      .attr("stroke","#000")
-      .attr("stroke-width",1)
-      .attr("fill", function(d,i){
-        return color(i);
-      })
-      .attr("d", path )
-      .on("mouseover",function(d,i){
-                d3.select(this)
-                    .attr("fill","yellow");
-            })
-            .on("mouseout",function(d,i){
-                d3.select(this)
-                    .attr("fill",color(i));
-            });
-    
-  });
-
-</script>
   </body>
 </html>
