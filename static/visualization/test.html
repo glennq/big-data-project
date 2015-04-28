@@ -1,70 +1,104 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Easy example | CartoDB.js</title>
-    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
-    <link rel="shortcut icon" href="http://cartodb.com/assets/favicon.ico" />
-    <style>
-      html, body, #map {
-        height: 100%;
-        padding: 0;
-        margin: 0;
-      }
-    </style>
+    <head>
+        <title>Easy example | CartoDB.js</title>
+        <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+        <link rel="shortcut icon" href="http://cartodb.com/assets/favicon.ico" />
+        <style>
+        html, body, #map {
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        #menu { position: absolute; top: 5px; right: 10px; width: 400px; height:60px; background: transparent; z-index:10;}
+        #menu a { 
+            margin: 15px 10px 0 0;
+            float: right;
+            vertical-align: baseline;
+            width: 70px;
+            padding: 10px;
+            text-align: center;
+            font: bold 11px "Helvetica",Arial;
+            line-height: normal;
+            color: #555;
+            border-radius: 4px;
+            border: 1px solid #777777;
+            background: #ffffff;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        #menu a.selected,
+        #menu a:hover { 
+            color: #F84F40;
+        }
+        </style>
 
-    <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/3.14/themes/css/cartodb.css" />
-  </head>
-  <body>
-    <div id="map"></div>
-    <script type="infowindow/html" id="infowindow_template">
-      <div class="cartodb-popup v2">
+        <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/3.14/themes/css/cartodb.css" />
+    </head>
+    <body>
+        <div id="map"></div>
+        <div id='menu'>
+            <a href="#megacities" id="megacities" class="button megacities">MEGACITIES</a>
+            <a href="#capitals" id="capitals" class="button capitals">CAPITALS</a>
+            <a href="#all" id="all" class="button all">ALL CITIES</a>
+        </div>
+        <script type="infowindow/html" id="infowindow_template">
+        <div class="cartodb-popup v2">
         <a href="#close" class="cartodb-popup-close-button close">x</a>
-         <div class="cartodb-popup-content-wrapper">
-           <div class="cartodb-popup-content">
-             <img style="width: 100%" src="http://rambo.webcindario.com/images/18447755.jpg">
-             <!-- content.data contains the field info -->
-             <h4>{{content.data.name}}</h4>
-           </div>
-         </div>
-         <div class="cartodb-popup-tip-container"></div>
-      </div>
-    </script>
+        <div class="cartodb-popup-content-wrapper">
+        <div class="cartodb-popup-content">
+        <img style="width: 100%" src="http://rambo.webcindario.com/images/18447755.jpg">
+        <!-- content.data contains the field info -->
+        <h4>{{content.data.name}}</h4>
+        </div>
+        </div>
+        <div class="cartodb-popup-tip-container"></div>
+        </div>
+        </script>
 
-    <!-- include cartodb.js library -->
-    <script src="http://libs.cartocdn.com/cartodb.js/v3/3.14/cartodb.js"></script>
+        <!-- include cartodb.js library -->
+        <script src="http://libs.cartocdn.com/cartodb.js/v3/3.14/cartodb.js"></script>
 
-    <script>
-      function main() {
-        cartodb.createVis('map', 'https://glennq.cartodb.com/api/v2/viz/02ba5ce8-e9bf-11e4-afe1-0e4fddd5de28/viz.json', {
-            title: true,
-            description: true,
-            search: true,
-            tiles_loader: true,
-            center_lat: 40.7127,
-            center_lon: -73.9059,
-            zoom: 12
-        })
-        .done(function(vis, layers) {
-          // layer 0 is the base layer, layer 1 is cartodb layer
-          // setInteraction is disabled by default
-          layers[1].setInteraction(true);
-          layers[1].on('featureOver', function(e, latlng, pos, data) {
-            cartodb.log.log(e, latlng, pos, data);
-          });
-          // you can get the native map to work with it
-          var map = vis.getNativeMap();
-          // now, perform any operations you need
-          // map.setZoom(3);
-	  // map.panTo([50.5, 30.5]);
-          var sublayer = layers[1].getSubLayer(0);
-          sublayer.infowindow.set('template', $('#infowindow_template').html());
-        })
-        .error(function(err) {
-          console.log(err);
-        });
-      }
-      window.onload = main;
-    </script>
-  </body>
+        <script>
+        function main() {
+            cartodb.createVis('map', 'https://glennq.cartodb.com/api/v2/viz/02ba5ce8-e9bf-11e4-afe1-0e4fddd5de28/viz.json', {
+                description: true,
+                tiles_loader: true,
+                center_lat: 40.7127,
+                center_lon: -73.9059,
+                zoom: 11
+            })
+                .done(function(vis, layers) {
+		    // layer 0 is the base layer, layer 1 is cartodb layer
+		    // setInteraction is disabled by default
+		    layers[1].setInteraction(true);
+		    layers[1].on('featureOver', function(e, latlng, pos, data) {
+		        cartodb.log.log(e, latlng, pos, data);
+                    });
+		    // you can get the native map to work with it
+		    var map = vis.getNativeMap();
+		    var subLayerOptions = {
+			cartocss: "#ne_10m_populated_places_simple{marker-fill: #F84F40; marker-width: 8; marker-line-color: white; marker-line-width: 2; marker-clip: false; marker-allow-overlap: true;}"
+		    }
+		    // now, perform any operations you need
+		    // map.setZoom(3);
+		    // map.panTo([50.5, 30.5]);
+		    var sublayer = layers[1].getSubLayer(0);
+		    subLayer.set(subLayerOptions);
+		    sublayer.infowindow.set('template', $('#infowindow_template').html());
+		    $('.button').click(function() {
+			$('.button').removeClass('selected');
+			$(this).addClass('selected');
+			LayerActions[$(this).attr('id')]();
+		    });
+                })
+	        .error(function(err) {
+		    console.log(err);
+	        });
+
+        }
+        window.onload = main;
+        </script>
+    </body>
 </html>
