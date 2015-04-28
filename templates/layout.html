@@ -9,10 +9,12 @@
     <link href="{{ url_for('static', filename='css/bootstrap.min.css')}}" rel="stylesheet" media="screen">
     <link href="{{ url_for('static', filename='css/dashboard.css')}}" rel="stylesheet">
     <style type="text/css">
-      .container {
-        max-width: 700px;
-      }
-      h2 {color: red;}
+    .container {
+            max-width: 700px;
+    }
+    h2 {
+	    color: red;
+    }
     </style>
   </head>
   <body>
@@ -31,7 +33,6 @@
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
             {{ nav_link('home', 'Home') }}
-            {{ nav_link('about', 'About') }}
             {{ nav_link('contact', 'Contact Us') }}
           </ul>
 	  <form class="navbar-form navbar-right">
@@ -67,12 +68,8 @@
 	  {% block heading %}
 		<h1>{% block page %}{% endblock %} - Flask Super Example</h1>
 		{% endblock %}
-		<h2>This is part of my base template</h2>
-		<br>
 		{% block content %}{% endblock %}
-		<br>
-		<h2>This is part of my base template</h2>
-		<br>
+
         </div>
 	<div class="footermine">
 		{% block footer %}

@@ -8,6 +8,7 @@
   {{ super() }}
 {% endblock %}
 {% block content %}
+<<<<<<< HEAD
     <h3> This is the start of my child template</h3>
   <br>
   <h4>Current date/time: {{ current_time | datetimefilter }}</h4>
@@ -22,6 +23,8 @@
   </ul>
   <br>
   <p>Same list with a filter: {{ my_list|join(', ') }}</p>
+=======
+>>>>>>> 77794390a555730a3303f574df0080636ab9013a
   <h3> This is the end of my child template</h3>
   {% block footer %}
   {{super()}}
