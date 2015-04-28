@@ -12,6 +12,8 @@ from datetime import date
 
 
 def findNeighborhood(location, index, neighborhoods, recursionTimes):
+    '''Find the location's neighborhood according to its latitude and longitude. And if we cannot find its neighborhood, we will find its nearest neighborhood by changing its latitude and longitude by 0.1. The recursion times are 4 times at most. If we cannot find its neighborhood, the function will return -1.'''
+
     if recursionTimes > 4:
         return -1
     match = index.intersection((location[0], location[1], location[0], location[1]))
@@ -19,6 +21,7 @@ def findNeighborhood(location, index, neighborhoods, recursionTimes):
         if any(map(lambda x: x.contains_point(location), neighborhoods[a][1])):
             return a
     
+    # Use a random number to choose a direction to do recursion
     n = random.randint(1, 4)
 
     if n == 1:

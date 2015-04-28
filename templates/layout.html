@@ -13,7 +13,7 @@
             max-width: 700px;
     }
     h2 {
-	    color: red;
+      color: red;
     }
     </style>
   </head>
@@ -35,7 +35,7 @@
             {{ nav_link('home', 'Home') }}
             {{ nav_link('contact', 'Contact Us') }}
           </ul>
-	  <form class="navbar-form navbar-right">
+    <form class="navbar-form navbar-right">
             <input type="text" class="form-control" placeholder="Search...">
           </form>
         </div><!-- /.navbar-collapse -->
@@ -44,7 +44,7 @@
 
     <div class="container-fluid">
       <div class="row">    
-	<div class="col-sm-3 col-md-2 sidebar">
+  <div class="col-sm-3 col-md-2 sidebar">
           <ul class="nav nav-sidebar">
             <li class="active"><a href="#">Overview <span class="sr-only">(current)</span></a></li>
             <li><a href="#">Reports</a></li>
@@ -65,20 +65,20 @@
           </ul>
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-	  {% block heading %}
-		<h1>{% block page %}{% endblock %} - Flask Super Example</h1>
-		{% endblock %}
-		{% block content %}{% endblock %}
+    {% block heading %}
+    <h1>{% block page %}{% endblock %} - Flask Super Example</h1>
+    {% endblock %}
+    {% block content %}{% endblock %}
 
         </div>
-	<div class="footermine">
-		{% block footer %}
-		Watch! This will be added to my base and child templates using the super powerful super block!
-		<br>
-		<br>
-		<br>
-		{% endblock %}
-	</div>
+  <div class="footermine">
+    {% block footer %}
+    Watch! This will be added to my base and child templates using the super powerful super block!
+    <br>
+    <br>
+    <br>
+    {% endblock %}
+  </div>
       </div>
     </div>  
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
