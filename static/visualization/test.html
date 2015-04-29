@@ -12,7 +12,7 @@
             margin: 0;
         }
         #menu { position: absolute; top: 5px; right: 10px; width: 400px; height:60px; background: transparent; z-index:10;}
-        #menu a { 
+        #menu a {
             margin: 15px 10px 0 0;
             float: right;
             vertical-align: baseline;
@@ -29,7 +29,7 @@
             cursor: pointer;
         }
         #menu a.selected,
-        #menu a:hover { 
+        #menu a:hover {
             color: #F84F40;
         }
         </style>
@@ -68,35 +68,34 @@
                 center_lat: 40.7127,
                 center_lon: -73.9059,
                 zoom: 11
-            })
-                .done(function(vis, layers) {
-		    // layer 0 is the base layer, layer 1 is cartodb layer
-		    // setInteraction is disabled by default
-		    layers[1].setInteraction(true);
-		    layers[1].on('featureOver', function(e, latlng, pos, data) {
-		        cartodb.log.log(e, latlng, pos, data);
-                    });
-		    // you can get the native map to work with it
-		    var map = vis.getNativeMap();
-		    var subLayerOptions = {
-			cartocss: "#ne_10m_populated_places_simple{marker-fill: #F84F40; marker-width: 8; marker-line-color: white; marker-line-width: 2; marker-clip: false; marker-allow-overlap: true;}"
-		    }
-		    // now, perform any operations you need
-		    // map.setZoom(3);
-		    // map.panTo([50.5, 30.5]);
-		    var sublayer = layers[1].getSubLayer(0);
-		    subLayer.set(subLayerOptions);
-		    sublayer.infowindow.set('template', $('#infowindow_template').html());
-		    $('.button').click(function() {
-			$('.button').removeClass('selected');
-			$(this).addClass('selected');
-			LayerActions[$(this).attr('id')]();
-		    });
-                })
-	        .error(function(err) {
-		    console.log(err);
+            }).done(function(vis, layers) {
+	        // layer 0 is the base layer, layer 1 is cartodb layer
+	        // setInteraction is disabled by default
+	        layers[1].setInteraction(true);
+	        layers[1].on('featureOver', function(e, latlng, pos, data) {
+	            cartodb.log.log(e, latlng, pos, data);
+                });
+	        // you can get the native map to work with it
+	        var map = vis.getNativeMap();
+	        var subLayerOptions = {
+	            cartocss: "#ne_10m_populated_places_simple{marker-fill: #F84F40; marker-width: 8; marker-line-color: white; marker-line-width: 2; marker-clip: false; marker-allow-overlap: true;}"
+	        }
+	        // now, perform any operations you need
+	        // map.setZoom(3);
+	        // map.panTo([50.5, 30.5]);
+	        var sublayer = layers[1].getSubLayer(0);
+	        subLayer.set(subLayerOptions);
+	        sublayer.infowindow.set('template', $('#infowindow_template').html());
+	        $('.button').click(function() {
+	            $('.button').removeClass('selected');
+	            $(this).addClass('selected');
+	            LayerActions[$(this).attr('id')]();
 	        });
-
+            }).error(function(err) {
+	        console.log(err);
+	    });
+            
+                
         }
         window.onload = main;
         </script>
