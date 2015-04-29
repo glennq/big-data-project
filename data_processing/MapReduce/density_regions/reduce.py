@@ -10,14 +10,14 @@ regions_low_density = set()
 
 
 def findHLDensityRegions(region_cnt):
-    #    std = np.std(region_cnt.values())
-    mean = np.mean(region_cnt.values())
+    upper = np.percentile(region_cnt.values(), 70)
+    lower = np.percentile(region_cnt.values(), 30)
     high_density = set()
     low_density = set()
     for k, v in region_cnt.items():
-        if v >= mean:
+        if v >= upper:
             high_density.add(k)
-        if v <= mean:
+        if v <= lower:
             low_density.add(k)
     return high_density, low_density
 
