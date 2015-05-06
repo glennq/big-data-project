@@ -66,8 +66,8 @@
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a href="#">Normal</a></li>
-                        <li><a href="#">Rain/Snow</a></li>
+                        <li><a href="#weather_normal" id="weather_normal" class="button weather_normal">Normal</a></li>
+                        <li><a href="#weather_rain_snow" id="weather_rain_snow" class="button weather_rain_snow">Rain/Snow</a></li>
                     </ul>
                 </div>
                 <div class="btn btn-group">
@@ -91,7 +91,14 @@
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a href="#">foo</a></li>
+                        <li><a href="#">00:00 - 03:00</a></li>
+                        <li><a href="#">03:00 - 06:00</a></li>
+                        <li><a href="#">06:00 - 09:00</a></li>
+                        <li><a href="#">09:00 - 12:00</a></li>
+                        <li><a href="#">12:00 - 15:00</a></li>
+                        <li><a href="#">15:00 - 18:00</a></li>
+                        <li><a href="#">18:00 - 21:00</a></li>
+                        <li><a href="#">21:00 - 24:00</a></li>
                     </ul>
                 </div>
             </div>
@@ -119,6 +126,7 @@
         <script src="http://libs.cartocdn.com/cartodb.js/v3/3.14/cartodb.js"></script>
 
         <script>
+         var sublayers = [];
          function main() {
              cartodb.createVis('map', 'https://glennq.cartodb.com/api/v2/viz/02ba5ce8-e9bf-11e4-afe1-0e4fddd5de28/viz.json', {
                  description: true,
@@ -133,32 +141,52 @@
 	         layers[1].on('featureOver', function(e, latlng, pos, data) {
 	             cartodb.log.log(e, latlng, pos, data);
                  });
-	         // you can get the native map to work with it
+
 	         var map = vis.getNativeMap();
 	         /* var subLayerOptions = {
 	            cartocss: "#ne_10m_populated_places_simple{marker-fill: #F84F40; marker-width: 8; marker-line-color: white; marker-line-width: 2; marker-clip: false; marker-allow-overlap: true;}"
 	            }
-	          */// now, perform any operations you need
+	          */
 	         // map.setZoom(3);
 	         // map.panTo([50.5, 30.5]);
 	         var sublayer = layers[1].getSubLayer(0);
 	         //subLayer.set(subLayerOptions);
 	         sublayer.infowindow.set('template', $('#infowindow_template').html());
                  sublayer.on('featureOver', function(e, latlng, pos, data) {
-                     var infowindowtext = document.getElementById("infowindow_template").text
-                     document.getElementById("infowindow_template").text =
-                     infowindowtext.replace(/src=".+"/, 'src="http://i3.kym-cdn.com/entries/icons/original/000/014/962/HeresyStamp.png"');
-                     sublayer.infowindow.set('template', $('#infowindow_template').html());
+                     /* var infowindowtext = document.getElementById("infowindow_template").text
+                        document.getElementById("infowindow_template").text =
+                        infowindowtext.replace(/src=".+"/, 'src="http://i3.kym-cdn.com/entries/icons/original/000/014/962/HeresyStamp.png"');
+                        sublayer.infowindow.set('template', $('#infowindow_template').html()); */
                  });
-	         $('.button').click(function() {
-	             $('.button').removeClass('selected');
-	             $(this).addClass('selected');
-	             LayerActions[$(this).attr('id')]();
-	         });
+                 sublayers.push(sublayer);
+
              }).error(function(err) {
 	         console.log(err);
 	     });
+             
+             var LayerActions = {
+                 weather_normal: function() {
+                     var infowindowtext = document.getElementById("infowindow_template").text
+                     document.getElementById("infowindow_template").text =
+                     infowindowtext.replace(/src=".+"/, 'src="http://www.breederretriever.com/photopost/data/591/cairn_terrier_pup.jpg"');
+                     sublayers[0].infowindow.set('template', $('#infowindow_template').html());
+                     return true;
+                 },
 
+                 weather_rain_snow: function() {
+                     var infowindowtext = document.getElementById("infowindow_template").text
+                     document.getElementById("infowindow_template").text =
+                     infowindowtext.replace(/src=".+"/, 'src="http://www.breederretriever.com/photopost/data/591/cairn_terrier_pup_2.jpg"');
+                     sublayers[0].infowindow.set('template', $('#infowindow_template').html());
+                     return true;
+                 }
+             };
+
+	     $('.button').click(function() {
+	         $('.button').removeClass('selected');
+	         $(this).addClass('selected');
+	         LayerActions[$(this).attr('id')]();
+	     });
 
          }
          window.onload = main;
