@@ -1,30 +1,31 @@
 from flask import Flask, render_template
 import datetime
 
-app = Flask(__name__)
+application = Flask(__name__)
+application.secret_key = 'cC1YCIaefjaelDNE2pgNEo2'
 
 
-@app.template_filter()
+@application.template_filter()
 def datetimefilter(value, format='%Y/%m/%d %H:%M'):
     """convert a datetime to a different format."""
     return value.strftime(format)
 
-app.jinja_env.filters['datetimefilter'] = datetimefilter
+application.jinja_env.filters['datetimefilter'] = datetimefilter
 
 
-@app.route("/")
+@application.route("/")
 def home():
     return render_template('template.html')
 
 
-# @app.route('/overview')
+# @application.route('/overview')
 # def overview():
 #     return render_template('template.html')
 
 
-@app.route("/map")
+@application.route("/map")
 def visualization():
     return render_template('template2.html')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    application.run(debug=True)
