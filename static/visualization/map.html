@@ -11,7 +11,11 @@
              padding: 0;
              margin: 0;
          }
-         #menubuttons { position: absolute; top: 15px; right: 10px; width: 400px; height:60px; background: transparent; z-index:10;}
+         div.cartodb-popup div.cartodb-popup-content-wrapper {
+             height: 300px;
+             max-height: 300px;
+         }
+         #menubuttons { position: absolute; top: 15px; right: 10px; width: 400px; height:60px; background: transparent; z-index:100;}
          #menubuttons a {
 
 
@@ -111,8 +115,8 @@
          <div class="cartodb-popup v2">
          <a href="#close" class="cartodb-popup-close-button close">x</a>
          <div class="cartodb-popup-content-wrapper">
-         <div class="cartodb-popup-content">
-         <img style="width: 100%" src="http://rambo.webcindario.com/images/18447755.jpg">
+         <div class="cartodb-popup-content" style="height: 100%; min-height:300px;">
+         <img style="width: 100%;" src="http://rambo.webcindario.com/images/18447755.jpg">
          <!-- content.data contains the field info -->
          <h4>Neighborhood Name</h4>
          <p>{{content.data.name}}</p>

@@ -14,4 +14,4 @@ https://github.com/twbs/bootstrap/blob/master/docs/examples/dashboard,
 
 Code for finding regions from https://github.com/ViDA-NYU/aws_taxi.
 
-Uses Bootstrap and Flask.
+Built on Bootstrap, Flask and CartoDB.
