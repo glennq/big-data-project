@@ -13,17 +13,17 @@ app.jinja_env.filters['datetimefilter'] = datetimefilter
 
 
 @app.route("/")
-def template_test():
-    return render_template('template.html')
-
-
-@app.route('/home')
 def home():
     return render_template('template.html')
 
 
-@app.route("/contact")
-def contact():
+# @app.route('/overview')
+# def overview():
+#     return render_template('template.html')
+
+
+@app.route("/map")
+def visualization():
     return render_template('template2.html')
 
 

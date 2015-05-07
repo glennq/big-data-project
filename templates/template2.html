@@ -7,8 +7,10 @@
   {% block heading %}
     {{ super() }}
   {% endblock %}
-  {% block content %}
-<iframe src="{{ url_for('static', filename='visualization/map.html')}}" width="100%" height="600" style="display:block; margin: 0 auto; border:0" allowfullscreen="allowfullscreen" seamless="seamless"></iframe>
+{% block content %}
+
+    <iframe src="{{ url_for('static', filename='visualization/map.html')}}" style="display:block; margin: 0 auto; border:0; width:100vw; height:100%" allowfullscreen="allowfullscreen" seamless="seamless"></iframe>
+
   {% block footer %}
     {{super()}}
   {% endblock %}
