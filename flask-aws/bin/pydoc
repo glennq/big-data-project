@@ -1,0 +1,5 @@
+#!/Users/glenn/NYUCourseProj/bigdata/deploy/big-data-project/flask-aws/bin/python
+
+import pydoc
+if __name__ == '__main__':
+    pydoc.cli()

@@ -1,0 +1,5 @@
+#!/Users/glenn/NYUCourseProj/bigdata/deploy/big-data-project/flask-aws/bin/python
+
+from idlelib.PyShell import main
+if __name__ == '__main__':
+    main()
