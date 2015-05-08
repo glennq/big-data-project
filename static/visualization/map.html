@@ -12,10 +12,11 @@
              margin: 0;
          }
          div.cartodb-popup div.cartodb-popup-content-wrapper {
-             height: 300px;
-             max-height: 300px;
+             /* height: 350px;
+                max-height: 350px;
+                width: 400px; */
          }
-         #menubuttons { position: absolute; top: 15px; right: 10px; width: 400px; height:60px; background: transparent; z-index:100;}
+         #menubuttons { position: absolute; top: 15px; right: 10px; width: 450px; height:60px; background: transparent; z-index:100;}
          #menubuttons a {
 
 
@@ -66,12 +67,23 @@
             <div id="btn-group-wrapper" class="btn-group"> <!-- group container for buttons merging -->
                 <div class="btn btn-group">  <!-- button and dropdown group in one -->
                     <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                        Demo
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#demomode_on" id="demomode_on" class="button demomode_on">On</a></li>
+                        <li><a href="#demomode_off" id="demomode_off" class="button demomode_off selected">Off</a></li>
+                    </ul>
+                </div>
+
+                <div class="btn btn-group">  <!-- button and dropdown group in one -->
+                    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
                         Weather
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a href="#weather_normal" id="weather_normal" class="button weather_normal">Normal</a></li>
-                        <li><a href="#weather_rain_snow" id="weather_rain_snow" class="button weather_rain_snow">Rain/Snow</a></li>
+                        <li><a href="#weather_good" id="weather_good" class="button weather_good">Good</a></li>
+                        <li><a href="#weather_bad" id="weather_bad" class="button weather_bad">Rain/Snow</a></li>
                     </ul>
                 </div>
                 <div class="btn btn-group">
@@ -80,13 +92,13 @@
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a href="#">Monday</a></li>
-                        <li><a href="#">Tuesday</a></li>
-                        <li><a href="#">Wednesday</a></li>
-                        <li><a href="#">Thursday</a></li>
-                        <li><a href="#">Friday</a></li>
-                        <li><a href="#">Saturday</a></li>
-                        <li><a href="#">Sunday</a></li>
+                        <li><a href="#dow_monday" id="dow_monday" class="button dow_monday">Monday</a></li>
+                        <li><a href="#dow_tuesday" id="dow_tuesday" class="button dow_tuesday">Tuesday</a></li>
+                        <li><a href="#dow_wednesday" id="dow_wednesday" class="button dow_wednesday">Wednesday</a></li>
+                        <li><a href="#dow_thursday" id="dow_thursday" class="button dow_thursday">Thursday</a></li>
+                        <li><a href="#dow_friday" id="dow_friday" class="button dow_friday">Friday</a></li>
+                        <li><a href="#dow_saturday" id="dow_saturday" class="button dow_saturday">Saturday</a></li>
+                        <li><a href="#dow_sunday" id="dow_sunday" class="button dow_sunday">Sunday</a></li>
                     </ul>
                 </div>
                 <div class="btn btn-group">  <!-- button and dropdown group in one -->
@@ -95,14 +107,14 @@
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a href="#">00:00 - 03:00</a></li>
-                        <li><a href="#">03:00 - 06:00</a></li>
-                        <li><a href="#">06:00 - 09:00</a></li>
-                        <li><a href="#">09:00 - 12:00</a></li>
-                        <li><a href="#">12:00 - 15:00</a></li>
-                        <li><a href="#">15:00 - 18:00</a></li>
-                        <li><a href="#">18:00 - 21:00</a></li>
-                        <li><a href="#">21:00 - 24:00</a></li>
+                        <li><a href="#tod_00_03" id="tod_00_03" class="button tod_00_03">00:00 - 03:00</a></li>
+                        <li><a href="#tod_03_06" id="tod_03_06" class="button tod_03_06">03:00 - 06:00</a></li>
+                        <li><a href="#tod_06_09" id="tod_06_09" class="button tod_06_09">06:00 - 09:00</a></li>
+                        <li><a href="#tod_09_12" id="tod_09_12" class="button tod_09_12">09:00 - 12:00</a></li>
+                        <li><a href="#tod_12_15" id="tod_12_15" class="button tod_12_15">12:00 - 15:00</a></li>
+                        <li><a href="#tod_15_18" id="tod_15_18" class="button tod_15_18">15:00 - 18:00</a></li>
+                        <li><a href="#tod_18_21" id="tod_18_21" class="button tod_18_21">18:00 - 21:00</a></li>
+                        <li><a href="#tod_21_24" id="tod_21_24" class="button tod_21_24">21:00 - 24:00</a></li>
                     </ul>
                 </div>
             </div>
@@ -115,8 +127,8 @@
          <div class="cartodb-popup v2">
          <a href="#close" class="cartodb-popup-close-button close">x</a>
          <div class="cartodb-popup-content-wrapper">
-         <div class="cartodb-popup-content" style="height: 100%; min-height:300px;">
-         <img style="width: 100%;" src="http://rambo.webcindario.com/images/18447755.jpg">
+         <div class="cartodb-popup-content">
+         <img style="width: 100%; display: none;" src="">
          <!-- content.data contains the field info -->
          <h4>Neighborhood Name</h4>
          <p>{{content.data.name}}</p>
@@ -131,6 +143,9 @@
 
         <script>
          var sublayers = [];
+         var weather = null;
+         var dayofweek = null;
+         var timeofday = null;
          function main() {
              cartodb.createVis('map', 'https://glennq.cartodb.com/api/v2/viz/02ba5ce8-e9bf-11e4-afe1-0e4fddd5de28/viz.json', {
                  description: true,
@@ -159,35 +174,107 @@
                  sublayer.on('featureOver', function(e, latlng, pos, data) {
                      /* var infowindowtext = document.getElementById("infowindow_template").text
                         document.getElementById("infowindow_template").text =
-                        infowindowtext.replace(/src=".+"/, 'src="http://i3.kym-cdn.com/entries/icons/original/000/014/962/HeresyStamp.png"');
-                        sublayer.infowindow.set('template', $('#infowindow_template').html()); */
+                        infowindowtext.replace(/src=".*"/, 'src="http://i3.kym-cdn.com/entries/icons/original/000/014/962/HeresyStamp.png"')
+                        .replace(/display: none/, 'display: block');
+                        sublayer.infowindow.set({'template': $('#infowindow_template').html(),
+                        maxHeight: 400
+                        }); */
                  });
                  sublayers.push(sublayer);
 
              }).error(function(err) {
 	         console.log(err);
 	     });
-             
+
              var LayerActions = {
-                 weather_normal: function() {
+                 weather_good: function() {
                      var infowindowtext = document.getElementById("infowindow_template").text
                      document.getElementById("infowindow_template").text =
-                     infowindowtext.replace(/src=".+"/, 'src="http://www.breederretriever.com/photopost/data/591/cairn_terrier_pup.jpg"');
-                     sublayers[0].infowindow.set('template', $('#infowindow_template').html());
+                     infowindowtext.replace(/src=".*"/, 'src="https://s3-us-west-2.amazonaws.com/pydag/picc/Financial_District_Normal_1_0_2.png"')
+                                   .replace(/display: none/, 'display: block');
+                     sublayers[0].infowindow.set({'template': $('#infowindow_template').html(),
+                                                  maxHeight: 400
+                     });
+                     weather = 'Normal';
                      return true;
                  },
 
-                 weather_rain_snow: function() {
+                 weather_bad: function() {
                      var infowindowtext = document.getElementById("infowindow_template").text
                      document.getElementById("infowindow_template").text =
-                     infowindowtext.replace(/src=".+"/, 'src="http://www.breederretriever.com/photopost/data/591/cairn_terrier_pup_2.jpg"');
-                     sublayers[0].infowindow.set('template', $('#infowindow_template').html());
+                     infowindowtext.replace(/src=".*"/, 'src="https://s3-us-west-2.amazonaws.com/pydag/pic/Astoria-Long_Island_City_Normal_2_0.png"')
+                                   .replace(/display: none/, 'display: block');
+                     sublayers[0].infowindow.set({'template': $('#infowindow_template').html(),
+                                                  maxHeight: 400
+                     });
+                     weather = 'Unnormal';
+                     return true;
+                 },
+                 dow_monday: function() {
+                     dayofweek = '1';
+                     return true;
+                 },
+                 dow_tuesday: function() {
+                     dayofweek = '2';
+                     return true;
+                 },
+                 dow_wednesday: function() {
+                     dayofweek = '3';
+                     return true;
+                 },
+                 dow_thursday: function() {
+                     dayofweek = '4';
+                     return true;
+                 },
+                 dow_friday: function() {
+                     dayofweek = '5';
+                     return true;
+                 },
+                 dow_saturday: function() {
+                     dayofweek = '6';
+                     return true;
+                 },
+                 dow_sunday: function() {
+                     dayofweek = '7';
+                     return true;
+                 },
+                 tod_00_03: function() {
+                     timeofday = '0_2';
+                     return true;
+                 },
+                 tod_03_06: function() {
+                     timeofday = '3_5';
+                     return true;
+                 },
+                 tod_06_09: function() {
+                     timeofday = '6_8';
+                     return true;
+                 },
+                 tod_09_12: function() {
+                     timeofday = '9_12';
+                     return true;
+                 },
+                 tod_12_15: function() {
+                     timeofday = '12_14';
+                     return true;
+                 },
+                 tod_15_18: function() {
+                     timeofday = '15_17';
+                     return true;
+                 },
+                 tod_18_21: function() {
+                     timeofday = '18_20';
+                     return true;
+                 },
+                 tod_21_24: function() {
+                     timeofday = '21_23';
                      return true;
                  }
+
              };
 
 	     $('.button').click(function() {
-	         $('.button').removeClass('selected');
+	         $(this).parent().siblings().children().removeClass('selected');
 	         $(this).addClass('selected');
 	         LayerActions[$(this).attr('id')]();
 	     });
