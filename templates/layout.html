@@ -9,13 +9,11 @@
         <link href="{{ url_for('static', filename='css/bootstrap.min.css')}}" rel="stylesheet" media="screen">
         <link href="{{ url_for('static', filename='css/dashboard.css')}}" rel="stylesheet">
         <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+        <link href="{{ url_for('static', filename='css/grayscale.css')}}" rel="stylesheet">
+        <link href="{{ url_for('static', filename='font-awesome/css/font-awesome.min.css')}}" rel="stylesheet" type="text/css">
+        <link href="http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+        <link href="http://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
         <style type="text/css">
-         .container {
-             max-width: 700px;
-         }
-         h2 {
-             color: red;
-         }
          html{
              height: 100%;
          }
@@ -24,7 +22,8 @@
          }
         </style>
     </head>
-    <body>
+    <!-- <body> -->
+    <body id="page-top" data-spy="scroll" data-target=".navbar-fixed-top">
         <nav class="navbar navbar-inverse navbar-fixed-top">
             <div class="container-fluid">
                 <div class="navbar-header">
@@ -42,36 +41,12 @@
                         {{ nav_link('home', 'Overview') }}
                         {{ nav_link('visualization', 'Visualization') }}
                     </ul>
-                    <!-- <form class="navbar-form navbar-right">
-                    <input type="text" class="form-control" placeholder="Search...">
-                    </form> -->
                 </div><!-- /.navbar-collapse -->
             </div><!-- /.container-fluid -->
         </nav>
 
         <div class="container-fluid" style="height: 100%;">
             <div class="row" style="height:100%;">
-                <!-- <div class="col-sm-3 col-md-2 sidebar">
-                <ul class="nav nav-sidebar">
-                <li class="active"><a href="#">Overview <span class="sr-only">(current)</span></a></li>
-                <li><a href="#">Reports</a></li>
-                <li><a href="#">Analytics</a></li>
-                <li><a href="#">Export</a></li>
-                </ul>
-                <ul class="nav nav-sidebar">
-                <li><a href="">Nav item</a></li>
-                <li><a href="">Nav item again</a></li>
-                <li><a href="">One more nav</a></li>
-                <li><a href="">Another nav item</a></li>
-                <li><a href="">More navigation</a></li>
-                </ul>
-                <ul class="nav nav-sidebar">
-                <li><a href="">Nav item again</a></li>
-                <li><a href="">One more nav</a></li>
-                <li><a href="">Another nav item</a></li>
-                </ul>
-                </div> -->
-                <!-- <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main"> -->
                 <div style="height:100%">
                     {% block heading %}
                     <!-- <h1>{% block page %}{% endblock %}</h1> -->
@@ -79,67 +54,15 @@
                     {% block content %}{% endblock %}
 
                 </div>
-                <div class="footermine">
-                    {% block footer %}
 
-                    {% endblock %}
-                </div>
+                {% block footer %}
+                {% endblock %}
+
             </div>
         </div>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
         <script src="{{ url_for('static', filename='js/bootstrap.min.js')}}"></script>
-	<script src="{{url_for('static', filename='d3.min.js')}}"></script>
-<script>
-  var width  = 1000;
-  var height = 1000;
-  
-  var svg = d3.select("body").append("svg")
-      .attr("width", width)
-      .attr("height", height)
-      .append("g")
-      .attr("transform", "translate(0,0)");
-  
-  var projection = d3.geo.mercator()
-            .center([-74, 40.5])
-            .scale(50000)
-            .translate([width/2, height/2]);
-  
-  var path = d3.geo.path()
-          .projection(projection);
-  
-  var density = {};
-  var all_region = {};
-
-  d3.csv('static/assets/data/density.csv', function(error, counties) {
-      counties.forEach(function(d) {
-          density[d.NAME] = d.density_color;
-      });
-      console.log(density);
-  });  
-
- 
-
-
-  d3.json('static/assets/data/ny.json', function(error, root) {
-    
-    if (error) 
-      return console.error(error);
-      console.log(root.features);
-    
-    svg.selectAll("path")
-      .data( root.features )
-      .enter()
-      .append("path")
-      .attr("stroke","#000")
-      .attr("stroke-width",1)
-      .attr("fill", "#99FFFF")
-      .attr("fill",function(root){
-        return density[root.properties.NAME];
-      })
-      .attr("d", path )
-    
-  });
-
-</script>
+        <script src="{{ url_for('static', filename='js/jquery.easing.min.js')}}"></script>
+        <script src="{{ url_for('static', filename='js/grayscale.js')}}"></script>
     </body>
 </html>
