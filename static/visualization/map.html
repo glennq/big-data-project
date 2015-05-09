@@ -11,27 +11,8 @@
              padding: 0;
              margin: 0;
          }
-         div.cartodb-popup div.cartodb-popup-content-wrapper {
-             /* height: 350px;
-                max-height: 350px;
-                width: 400px; */
-         }
          #menubuttons { position: absolute; top: 15px; right: 10px; width: 450px; height:40px; background: transparent; z-index:40;}
          #menubuttons a {
-
-
-             /*float: right;
-                margin: 15px 10px 0 0;
-                font: bold 11px "Helvetica",Arial;
-                vertical-align: baseline;
-                width: 70px;
-                padding: 10px;
-                text-align: center;
-
-                line-height: normal;
-                color: #555;
-                border-radius: 4px;
-                border: 1px solid #777777;*/
              background: #ffffff;
              text-decoration: none;
              cursor: pointer;
@@ -127,10 +108,6 @@
                     </ul>
                 </div>
             </div>
-            <!-- <a href="#megacities" id="megacities" class="button megacities">MEGACITIES</a>
-            <a href="#capitals" id="capitals" class="button capitals">CAPITALS</a>
-            <a href="#all" id="all" class="button all">ALL CITIES</a>
-            -->
         </div>
         <script type="infowindow/html" id="infowindow_template">
          <div class="cartodb-popup v2">
@@ -156,6 +133,7 @@
          var weather = null;
          var dayofweek = null;
          var timeofday = null;
+    
          function main() {
              cartodb.createVis('map', 'https://glennq.cartodb.com/api/v2/viz/02ba5ce8-e9bf-11e4-afe1-0e4fddd5de28/viz.json', {
                  description: true,
@@ -172,22 +150,17 @@
                  });
                  
 	         var map = vis.getNativeMap();
-	         /* var subLayerOptions = {
-	            cartocss: "#ne_10m_populated_places_simple{marker-fill: #F84F40; marker-width: 8; marker-line-color: white; marker-line-width: 2; marker-clip: false; marker-allow-overlap: true;}"
-	            }
-	          */
-	         // map.setZoom(3);
-	         // map.panTo([50.5, 30.5]);
 	         var sublayer = layers[1].getSubLayer(0);
                  
 	         //subLayer.set(subLayerOptions);
 	         sublayer.infowindow.set('template', $('#infowindow_template').html());
                  sublayer.on('featureOver', function(e, latlng, pos, data) {
+
                      if (weather && dayofweek && timeofday) {
                          var infowindowtext = document.getElementById("infowindow_template").text
-                         var url_src = 'src="https://s3-us-west-2.amazonaws.com/pydag/pic/pic/' + name_table[data.cartodb_id].replace(/ /g, '_') + '_' + weather + '_' + dayofweek + '_' + timeofday + '.png"';
+                         var url_src = 'https://s3-us-west-2.amazonaws.com/pydag/pic/pic/' + name_table[data.cartodb_id].replace(/ /g, '_') + '_' + weather + '_' + dayofweek + '_' + timeofday + '.png';                     
                          document.getElementById("infowindow_template").text =
-                         infowindowtext.replace(/src=".*"/, url_src)
+                         infowindowtext.replace(/src=".*"/, 'src="'+url_src+'"')
                                        .replace(/display: none/, 'display: block');
                          sublayer.infowindow.set({'template': $('#infowindow_template').html(),
                                                   maxHeight: 400
@@ -201,20 +174,14 @@
                          });
                      }
                  });
-                 /* sublayer.setCartoCSS(
-                    ".loading { opacity: 1; } #zillowneighborhoods_ny{polygon-fill: #FF6600;polygon-opacity: 0.7;  line-color: #FFF;  line-width: 1;  line-opacity: 1;}"
-                    );  */
-
-
-                 /* sublayers.push(sublayer); */
-                 /* layers[1].on("loading", function() {
-                    console.log("layer about to load");
-                    layers[1].getSubLayer(0).set({
-                    cartocss: ".leaflet-tile-loading { polygon-opacity: 1; }"
+                 /* sublayer.on('featureClick', function() {
+                    $(document).ready(function () {
+                    $('img').on("error", function() {
+                    this.src = "http://www.breederretriever.com/photopost/data/591/cairn_terrier_pup_2.jpg";
+                    });
+                    });
                     }); */
-             
-             
-
+                 
              }).error(function(err) {
 	         console.log(err);
 	     });
@@ -222,26 +189,11 @@
 
              var LayerActions = {
                  weather_good: function() {
-                     /* var infowindowtext = document.getElementById("infowindow_template").text
-                        document.getElementById("infowindow_template").text =
-                        infowindowtext.replace(/src=".*"/, 'src="https://s3-us-west-2.amazonaws.com/pydag/picc/Financial_District_Normal_1_0_2.png"')
-                        .replace(/display: none/, 'display: block');
-                        sublayers[0].infowindow.set({'template': $('#infowindow_template').html(),
-                        maxHeight: 400
-                        }); */
                      weather = 'Normal';
                      return true;
                  },
 
                  weather_bad: function() {
-                     /* var infowindowtext = document.getElementById("infowindow_template").text
-                        document.getElementById("infowindow_template").text =
-                        infowindowtext.replace(/src=".*"/, 'src="https://s3-us-west-2.amazonaws.com/pydag/pic/Astoria-Long_Island_City_Normal_2_0.png"')
-                        .replace(/display: none/, 'display: block');
-                        sublayers[0].infowindow.set({'template': $('#infowindow_template').html(),
-                        maxHeight: 400
-                        }); 
-                      */
                      weather = 'Unnormal';
                      return true;
                  },
@@ -313,10 +265,14 @@
 	         $(this).addClass('selected');
 	         LayerActions[$(this).attr('id')]();
 	     });
+
              
 
          }
+
          window.onload = main;
+         
+
         </script>
     </body>
 </html>
