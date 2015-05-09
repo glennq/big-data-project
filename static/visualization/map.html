@@ -53,13 +53,22 @@
              -webkit-border-radius: 0 4px 4px 0;
              -moz-border-radius: 0 4px 4px 0;
              border-radius: 0 4px 4px 0;
-         }
+         }         
         </style>
 
         <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/3.14/themes/css/cartodb.css" />
         <link rel="stylesheet" href="../css/bootstrap.min.css" />
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
         <script src="../js/bootstrap.min.js"></script>
+        <style>
+         .leaflet-fade-anim .leaflet-tile {
+             opacity: 1;
+         }
+         .leaflet-tile {
+             filter: inherit;
+             visibility: initial;
+         }
+        </style>
     </head>
     <body>
         <div id="map"></div>
@@ -142,7 +151,8 @@
         <script src="http://libs.cartocdn.com/cartodb.js/v3/3.14/cartodb.js"></script>
 
         <script>
-         var sublayers = [];
+         var name_table = {2: "West Village", 3: "Bensonhurst", 5: "East Village", 8: "Auburndale", 14: "Battery Park", 16: "Throggs Neck", 17: "Carnegie Hill", 18: "College Point", 25: "Douglastown-Little Neck", 26: "Queens Village", 27: "Morris Park", 28: "Gramercy", 29: "Baychester", 30: "Middle Village", 32: "Fordham", 43: "Spuyten Duyvil", 44: "Soho", 45: "Woodside", 46: "Rosedale", 48: "Mott Haven", 51: "Nkew Gardens", 53: "Mapleton-Flatlands", 56: "Bay Ridge", 60: "Williams Bridge", 65: "Boerum Hill", 66: "Whitestone", 67: "Murray Hill", 68: "Cobble Hill", 69: "Downtown", 70: "Union Port", 73: "Woodhaven-Richmond Hill", 75: "Coney Island", 77: "Soundview", 78: "Jamaica", 79: "Laurelton", 81: "Little Italy", 83: "Sunset Park", 84: "Borough Park", 86: "Jackson Heights", 87: "East Brooklyn", 89: "Bedford-Stuyvesant", 90: "Maspeth", 92: "Central Park", 93: "Flatbush", 95: "Morris Heights", 97: "Glendale", 101: "Country Club", 105: "Greenwich Village", 106: "Park Slope", 107: "Midtown", 111: "Morningside Heights", 115: "Harlem", 118: "Steinway", 121: "Flushing", 122: "Williamsburg", 127: "Hamilton Heights", 128: "Kings Bridge", 130: "University Heights", 131: "Canarsie", 132: "Greenwood", 136: "City Island", 137: "Saintalbans", 141: "Tribeca", 145: "Gravesend-Sheepshead Bay", 148: "Red Hook", 153: "Carroll Gardens", 155: "Queensboro Hill", 156: "Springfield Gardens", 157: "North Sutton Area", 159: "Astoria-Long Island City", 162: "Upper East Side", 165: "Dyker Heights", 170: "Financial District", 175: "Inwood", 177: "Bedford Park", 182: "Sunny Side", 183: "Chelsea", 186: "Lower East Side", 188: "Wakefield-Williamsbridge", 192: "Hunts Point", 197: "Chinatown", 199: "Ridgewood", 201: "Forest Hills", 206: "Washington Heights", 207: "Brownsville", 208: "Bushwick", 212: "The Rockaways", 213: "Upper West Side", 217: "Fort Green", 218: "Clinton", 224: "Yorkville", 225: "Clearview", 228: "High Bridge", 232: "Riverdale", 233: "Eastchester", 235: "Woodlawn-Nordwood", 240: "Tremont", 241: "Howard Beach", 245: "Utopia", 246: "Parkchester", 247: "Bayside", 250: "South Bronx", 251: "Garment District", 252: "East Harlem", 265: "Corona"}
+         /* var sublayers = []; */
          var weather = null;
          var dayofweek = null;
          var timeofday = null;
@@ -158,9 +168,9 @@
 	         // setInteraction is disabled by default
 	         layers[1].setInteraction(true);
 	         layers[1].on('featureOver', function(e, latlng, pos, data) {
-	             cartodb.log.log(e, latlng, pos, data);
+	             /* cartodb.log.log(e, latlng, pos, data); */
                  });
-
+                 
 	         var map = vis.getNativeMap();
 	         /* var subLayerOptions = {
 	            cartocss: "#ne_10m_populated_places_simple{marker-fill: #F84F40; marker-width: 8; marker-line-color: white; marker-line-width: 2; marker-clip: false; marker-allow-overlap: true;}"
@@ -169,44 +179,69 @@
 	         // map.setZoom(3);
 	         // map.panTo([50.5, 30.5]);
 	         var sublayer = layers[1].getSubLayer(0);
+                 
 	         //subLayer.set(subLayerOptions);
 	         sublayer.infowindow.set('template', $('#infowindow_template').html());
                  sublayer.on('featureOver', function(e, latlng, pos, data) {
-                     /* var infowindowtext = document.getElementById("infowindow_template").text
-                        document.getElementById("infowindow_template").text =
-                        infowindowtext.replace(/src=".*"/, 'src="http://i3.kym-cdn.com/entries/icons/original/000/014/962/HeresyStamp.png"')
-                        .replace(/display: none/, 'display: block');
-                        sublayer.infowindow.set({'template': $('#infowindow_template').html(),
-                        maxHeight: 400
-                        }); */
+                     if (weather && dayofweek && timeofday) {
+                         var infowindowtext = document.getElementById("infowindow_template").text
+                         var url_src = 'src="https://s3-us-west-2.amazonaws.com/pydag/pic/pic/' + name_table[data.cartodb_id].replace(/ /g, '_') + '_' + weather + '_' + dayofweek + '_' + timeofday + '.png"';
+                         document.getElementById("infowindow_template").text =
+                         infowindowtext.replace(/src=".*"/, url_src)
+                                       .replace(/display: none/, 'display: block');
+                         sublayer.infowindow.set({'template': $('#infowindow_template').html(),
+                                                  maxHeight: 400
+                         });
+                     } else {
+                         var infowindowtext = document.getElementById("infowindow_template").text
+                         document.getElementById("infowindow_template").text =
+                         infowindowtext.replace(/display: block/, 'display: none');
+                         sublayer.infowindow.set({'template': $('#infowindow_template').html(),
+                                                  maxHeight: 400
+                         });
+                     }
                  });
-                 sublayers.push(sublayer);
+                 /* sublayer.setCartoCSS(
+                    ".loading { opacity: 1; } #zillowneighborhoods_ny{polygon-fill: #FF6600;polygon-opacity: 0.7;  line-color: #FFF;  line-width: 1;  line-opacity: 1;}"
+                    );  */
+
+
+                 /* sublayers.push(sublayer); */
+                 /* layers[1].on("loading", function() {
+                    console.log("layer about to load");
+                    layers[1].getSubLayer(0).set({
+                    cartocss: ".leaflet-tile-loading { polygon-opacity: 1; }"
+                    }); */
+             
+             
 
              }).error(function(err) {
 	         console.log(err);
 	     });
 
+
              var LayerActions = {
                  weather_good: function() {
-                     var infowindowtext = document.getElementById("infowindow_template").text
-                     document.getElementById("infowindow_template").text =
-                     infowindowtext.replace(/src=".*"/, 'src="https://s3-us-west-2.amazonaws.com/pydag/picc/Financial_District_Normal_1_0_2.png"')
-                                   .replace(/display: none/, 'display: block');
-                     sublayers[0].infowindow.set({'template': $('#infowindow_template').html(),
-                                                  maxHeight: 400
-                     });
+                     /* var infowindowtext = document.getElementById("infowindow_template").text
+                        document.getElementById("infowindow_template").text =
+                        infowindowtext.replace(/src=".*"/, 'src="https://s3-us-west-2.amazonaws.com/pydag/picc/Financial_District_Normal_1_0_2.png"')
+                        .replace(/display: none/, 'display: block');
+                        sublayers[0].infowindow.set({'template': $('#infowindow_template').html(),
+                        maxHeight: 400
+                        }); */
                      weather = 'Normal';
                      return true;
                  },
 
                  weather_bad: function() {
-                     var infowindowtext = document.getElementById("infowindow_template").text
-                     document.getElementById("infowindow_template").text =
-                     infowindowtext.replace(/src=".*"/, 'src="https://s3-us-west-2.amazonaws.com/pydag/pic/Astoria-Long_Island_City_Normal_2_0.png"')
-                                   .replace(/display: none/, 'display: block');
-                     sublayers[0].infowindow.set({'template': $('#infowindow_template').html(),
-                                                  maxHeight: 400
-                     });
+                     /* var infowindowtext = document.getElementById("infowindow_template").text
+                        document.getElementById("infowindow_template").text =
+                        infowindowtext.replace(/src=".*"/, 'src="https://s3-us-west-2.amazonaws.com/pydag/pic/Astoria-Long_Island_City_Normal_2_0.png"')
+                        .replace(/display: none/, 'display: block');
+                        sublayers[0].infowindow.set({'template': $('#infowindow_template').html(),
+                        maxHeight: 400
+                        }); 
+                      */
                      weather = 'Unnormal';
                      return true;
                  },
@@ -278,6 +313,7 @@
 	         $(this).addClass('selected');
 	         LayerActions[$(this).attr('id')]();
 	     });
+             
 
          }
          window.onload = main;
