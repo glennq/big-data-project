@@ -154,10 +154,11 @@ def dealWithWeatherData(df):
 if __name__ == "__main__":
     fileNameList = []
     for m in ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"]:
-        fileName = "data/do" + str(3) + m + ".txt"
-        fileNameList.append(fileName)
-        fileName = "data/pu" + str(3) + m + ".txt"
-        fileNameList.append(fileName)
+        for i in range(1, 4):
+            fileName = "data/do" + str(i) + m + ".txt"
+            fileNameList.append(fileName)
+            fileName = "data/pu" + str(i) + m + ".txt"
+            fileNameList.append(fileName)
     savePuDoDataToFile(fileNameList) 
     dfList = []
     dfList.append(readWeatherData("cleaned_2011_weather.csv"))
