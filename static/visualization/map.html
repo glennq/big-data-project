@@ -11,27 +11,8 @@
              padding: 0;
              margin: 0;
          }
-         div.cartodb-popup div.cartodb-popup-content-wrapper {
-             /* height: 350px;
-                max-height: 350px;
-                width: 400px; */
-         }
          #menubuttons { position: absolute; top: 15px; right: 10px; width: 450px; height:40px; background: transparent; z-index:40;}
          #menubuttons a {
-
-
-             /*float: right;
-                margin: 15px 10px 0 0;
-                font: bold 11px "Helvetica",Arial;
-                vertical-align: baseline;
-                width: 70px;
-                padding: 10px;
-                text-align: center;
-
-                line-height: normal;
-                color: #555;
-                border-radius: 4px;
-                border: 1px solid #777777;*/
              background: #ffffff;
              text-decoration: none;
              cursor: pointer;
@@ -54,12 +35,25 @@
              -moz-border-radius: 0 4px 4px 0;
              border-radius: 0 4px 4px 0;
          }
+         a.weather-disabled, a.weather-disabled:hover {
+             color: #ccc;
+         }
+         
         </style>
 
         <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/3.14/themes/css/cartodb.css" />
         <link rel="stylesheet" href="../css/bootstrap.min.css" />
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
         <script src="../js/bootstrap.min.js"></script>
+        <style>
+         .leaflet-fade-anim .leaflet-tile {
+             opacity: 1;
+         }
+         .leaflet-tile {
+             filter: inherit;
+             visibility: initial;
+         }
+        </style>
     </head>
     <body>
         <div id="map"></div>
@@ -76,7 +70,7 @@
                     </ul>
                 </div>
 
-                <div class="btn btn-group">  <!-- button and dropdown group in one -->
+                <div class="btn btn-group" id="weather-buttons">  <!-- button and dropdown group in one -->
                     <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
                         Weather
                         <span class="caret"></span>
@@ -118,10 +112,6 @@
                     </ul>
                 </div>
             </div>
-            <!-- <a href="#megacities" id="megacities" class="button megacities">MEGACITIES</a>
-            <a href="#capitals" id="capitals" class="button capitals">CAPITALS</a>
-            <a href="#all" id="all" class="button all">ALL CITIES</a>
-            -->
         </div>
         <script type="infowindow/html" id="infowindow_template">
          <div class="cartodb-popup v2">
@@ -142,12 +132,24 @@
         <script src="http://libs.cartocdn.com/cartodb.js/v3/3.14/cartodb.js"></script>
 
         <script>
+         var name_table = {1: "Red Hook", 2: "Spuyten Duyvil", 3: "Auburndale", 4: "Soho", 5: "Bedford-Stuyvesant", 6: "Murray Hill", 7: "South Bronx", 8: "Little Italy", 9: "Chinatown", 10: "Garment District", 11: "East Village", 12: "Nkew Gardens", 13: "Mott Haven", 28: "East Harlem", 14: "Mapleton-Flatlands", 15: "Boerum Hill", 16: "Union Port", 17: "Morris Heights", 18: "Laurelton", 19: "Central Park", 20: "Greenwich Village", 21: "Park Slope", 22: "Canarsie", 23: "Greenwood", 24: "Hamilton Heights", 25: "Upper East Side", 26: "Lower East Side", 27: "Yorkville", 29: "West Village", 30: "Bensonhurst", 31: "Battery Park", 32: "Woodhaven-Richmond Hill", 33: "Soundview", 34: "Gramercy", 35: "Throggs Neck", 36: "Carnegie Hill", 38: "Morris Park", 39: "Baychester", 58: "Morningside Heights", 37: "College Point", 56: "Sunset Park", 40: "Douglastown-Little Neck", 41: "Queens Village", 42: "Middle Village", 43: "Fordham", 44: "Dyker Heights", 45: "Woodside", 46: "Williams Bridge", 47: "Downtown", 57: "Borough Park", 48: "Rosedale", 49: "Kings Bridge", 50: "Bay Ridge", 51: "Whitestone", 52: "Cobble Hill", 53: "Jamaica", 54: "University Heights", 55: "Coney Island", 59: "Jackson Heights", 60: "East Brooklyn", 61: "Maspeth", 62: "Flatbush", 63: "Glendale", 64: "Country Club", 65: "Harlem", 66: "Midtown", 67: "Queensboro Hill", 68: "Tribeca", 69: "Springfield Gardens", 80: "Carroll Gardens", 70: "Steinway", 71: "North Sutton Area", 72: "Upper West Side", 73: "Williamsburg", 74: "Flushing", 78: "Astoria-Long Island City", 75: "City Island", 76: "Saintalbans", 77: "The Rockaways", 79: "Gravesend-Sheepshead Bay", 81: "Financial District", 82: "Bedford Park", 83: "Hunts Point", 84: "Inwood", 85: "Sunny Side", 86: "Chelsea", 87: "Forest Hills", 92: "Brownsville", 88: "Wakefield-Williamsbridge", 89: "Ridgewood", 90: "Clearview", 91: "Washington Heights", 93: "Bushwick", 94: "Fort Green", 95: "Clinton", 96: "Woodlawn-Nordwood", 97: "High Bridge", 98: "Riverdale", 99: "Eastchester", 100: "Tremont", 101: "Howard Beach", 102: "Utopia", 103: "Parkchester", 104: "Bayside", 105: "Corona"};
+         var demo_mode_weather = {"1": {"3_5": "Unnormal", "6_8": "Unnormal", "9_11": "Unnormal", "18_20": "Unnormal", "15_17": "Unnormal", "21_23": "Normal", "0_2": "Normal", "12_14": "Unnormal"}, "3": {"3_5": "Normal", "6_8": "Normal", "9_11": "Normal", "18_20": "Normal", "15_17": "Unnormal", "21_23": "Unnormal", "0_2": "Normal", "12_14": "Normal"}, "2": {"3_5": "Normal", "6_8": "Normal", "9_11": "Normal", "18_20": "Unnormal", "15_17": "Normal", "21_23": "Unnormal", "0_2": "Normal", "12_14": "Normal"}, "5": {"3_5": "Normal", "6_8": "Normal", "9_11": "Unnormal", "18_20": "Normal", "15_17": "Unnormal", "21_23": "Normal", "0_2": "Normal", "12_14": "Unnormal"}, "4": {"3_5": "Unnormal", "6_8": "Normal", "9_11": "Normal", "18_20": "Normal", "15_17": "Normal", "21_23": "Normal", "0_2": "Unnormal", "12_14": "Unnormal"}, "7": {"3_5": "Normal", "6_8": "Unnormal", "9_11": "Unnormal", "18_20": "Normal", "15_17": "Unnormal", "21_23": "Normal", "0_2": "Normal", "12_14": "Unnormal"}, "6": {"3_5": "Normal", "6_8": "Normal", "9_11": "Unnormal", "18_20": "Normal", "15_17": "Normal", "21_23": "Normal", "0_2": "Normal", "12_14": "Normal"}};
+         /* ($.ajax({
+            url: '../assets/anomaly_weather.json',
+            success: function (data) {
+            demo_mode_weather = data;
+            },
+            error: alert('error')
+            })); */
+
          var sublayers = [];
          var weather = null;
          var dayofweek = null;
          var timeofday = null;
+         var demomode = false;
+         var base_css = "#zillowneighborhoods_ny_merge [=1] { polygon-fill:#FF6600; polygon-opacity: 0.7; line-color: #FFF; line-width: 1; line-opacity: 1;}  #zillowneighborhoods_ny_merge [=0] { polygon-fill:#3E7BB6; polygon-opacity: 0.7; line-color: #FFF; line-width: 1; line-opacity: 1;}";    
          function main() {
-             cartodb.createVis('map', 'https://glennq.cartodb.com/api/v2/viz/02ba5ce8-e9bf-11e4-afe1-0e4fddd5de28/viz.json', {
+             cartodb.createVis('map', 'https://glennq.cartodb.com/api/v2/viz/ef8b4226-f6b2-11e4-a9be-0e018d66dc29/viz.json', {
                  description: true,
                  tiles_loader: true,
                  center_lat: 40.7267,
@@ -158,56 +160,54 @@
 	         // setInteraction is disabled by default
 	         layers[1].setInteraction(true);
 	         layers[1].on('featureOver', function(e, latlng, pos, data) {
-	             cartodb.log.log(e, latlng, pos, data);
+	             /* cartodb.log.log(e, latlng, pos, data); */
                  });
-
+                 
 	         var map = vis.getNativeMap();
-	         /* var subLayerOptions = {
-	            cartocss: "#ne_10m_populated_places_simple{marker-fill: #F84F40; marker-width: 8; marker-line-color: white; marker-line-width: 2; marker-clip: false; marker-allow-overlap: true;}"
-	            }
-	          */
-	         // map.setZoom(3);
-	         // map.panTo([50.5, 30.5]);
 	         var sublayer = layers[1].getSubLayer(0);
+                 
 	         //subLayer.set(subLayerOptions);
 	         sublayer.infowindow.set('template', $('#infowindow_template').html());
                  sublayer.on('featureOver', function(e, latlng, pos, data) {
-                     /* var infowindowtext = document.getElementById("infowindow_template").text
-                        document.getElementById("infowindow_template").text =
-                        infowindowtext.replace(/src=".*"/, 'src="http://i3.kym-cdn.com/entries/icons/original/000/014/962/HeresyStamp.png"')
-                        .replace(/display: none/, 'display: block');
-                        sublayer.infowindow.set({'template': $('#infowindow_template').html(),
-                        maxHeight: 400
-                        }); */
+
+                     if (weather && dayofweek && timeofday) {                             
+                         var infowindowtext = document.getElementById("infowindow_template").text
+                         var url_src = 'https://s3-us-west-2.amazonaws.com/project-pydag/pic/' + name_table[data.cartodb_id].replace(/ /g, '_') + '_' + weather + '_' + dayofweek + '_' + timeofday + '.png';                     
+                         document.getElementById("infowindow_template").text =
+                         infowindowtext.replace(/src=".*"/, 'src="'+url_src+'"')
+                                       .replace(/display: none/, 'display: block');
+                         sublayer.infowindow.set({'template': $('#infowindow_template').html(),
+                                                  maxHeight: 400
+                         });
+
+                     } else {
+                         var infowindowtext = document.getElementById("infowindow_template").text
+                         document.getElementById("infowindow_template").text =
+                         infowindowtext.replace(/display: block/, 'display: none');
+                         sublayer.infowindow.set({'template': $('#infowindow_template').html(),
+                                                  maxHeight: 400
+                         });
+                     }
                  });
                  sublayers.push(sublayer);
-
+                 
              }).error(function(err) {
 	         console.log(err);
 	     });
 
+
              var LayerActions = {
                  weather_good: function() {
-                     var infowindowtext = document.getElementById("infowindow_template").text
-                     document.getElementById("infowindow_template").text =
-                     infowindowtext.replace(/src=".*"/, 'src="https://s3-us-west-2.amazonaws.com/pydag/picc/Financial_District_Normal_1_0_2.png"')
-                                   .replace(/display: none/, 'display: block');
-                     sublayers[0].infowindow.set({'template': $('#infowindow_template').html(),
-                                                  maxHeight: 400
-                     });
-                     weather = 'Normal';
+                     if (!demomode) {
+                         weather = 'Normal';
+                     }
                      return true;
                  },
 
                  weather_bad: function() {
-                     var infowindowtext = document.getElementById("infowindow_template").text
-                     document.getElementById("infowindow_template").text =
-                     infowindowtext.replace(/src=".*"/, 'src="https://s3-us-west-2.amazonaws.com/pydag/pic/Astoria-Long_Island_City_Normal_2_0.png"')
-                                   .replace(/display: none/, 'display: block');
-                     sublayers[0].infowindow.set({'template': $('#infowindow_template').html(),
-                                                  maxHeight: 400
-                     });
-                     weather = 'Unnormal';
+                     if (!demomode) {
+                         weather = 'Unnormal';
+                     }
                      return true;
                  },
                  dow_monday: function() {
@@ -251,7 +251,7 @@
                      return true;
                  },
                  tod_09_12: function() {
-                     timeofday = '9_12';
+                     timeofday = '9_11';
                      return true;
                  },
                  tod_12_15: function() {
@@ -269,6 +269,17 @@
                  tod_21_24: function() {
                      timeofday = '21_23';
                      return true;
+                 },
+                 demomode_on: function() {
+                     demomode = true;
+                     $('#weather-buttons').children().addClass('disabled');
+                     return true;
+                 },
+                 demomode_off: function() {
+                     demomode = false;
+                     sublayers[0].setCartoCSS("#zillowneighborhoods_ny_merge { polygon-fill: #FF6600;  polygon-opacity: 0.7;  line-color: #FFF;  line-width: 1;  line-opacity: 1;}");
+                     $('#weather-buttons').children().removeClass('disabled');
+                     return true;
                  }
 
              };
@@ -277,10 +288,17 @@
 	         $(this).parent().siblings().children().removeClass('selected');
 	         $(this).addClass('selected');
 	         LayerActions[$(this).attr('id')]();
+                 if (demomode) {
+                     sublayers[0].setCartoCSS(base_css.replace(/=/g, '_'+dayofweek+'_'+timeofday+'='));
+                     weather = demo_mode_weather[dayofweek][timeofday];
+                 };
 	     });
 
          }
+
          window.onload = main;
+         
+
         </script>
     </body>
 </html>
