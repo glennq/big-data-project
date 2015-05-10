@@ -133,7 +133,15 @@
 
         <script>
          var name_table = {1: "Red Hook", 2: "Spuyten Duyvil", 3: "Auburndale", 4: "Soho", 5: "Bedford-Stuyvesant", 6: "Murray Hill", 7: "South Bronx", 8: "Little Italy", 9: "Chinatown", 10: "Garment District", 11: "East Village", 12: "Nkew Gardens", 13: "Mott Haven", 28: "East Harlem", 14: "Mapleton-Flatlands", 15: "Boerum Hill", 16: "Union Port", 17: "Morris Heights", 18: "Laurelton", 19: "Central Park", 20: "Greenwich Village", 21: "Park Slope", 22: "Canarsie", 23: "Greenwood", 24: "Hamilton Heights", 25: "Upper East Side", 26: "Lower East Side", 27: "Yorkville", 29: "West Village", 30: "Bensonhurst", 31: "Battery Park", 32: "Woodhaven-Richmond Hill", 33: "Soundview", 34: "Gramercy", 35: "Throggs Neck", 36: "Carnegie Hill", 38: "Morris Park", 39: "Baychester", 58: "Morningside Heights", 37: "College Point", 56: "Sunset Park", 40: "Douglastown-Little Neck", 41: "Queens Village", 42: "Middle Village", 43: "Fordham", 44: "Dyker Heights", 45: "Woodside", 46: "Williams Bridge", 47: "Downtown", 57: "Borough Park", 48: "Rosedale", 49: "Kings Bridge", 50: "Bay Ridge", 51: "Whitestone", 52: "Cobble Hill", 53: "Jamaica", 54: "University Heights", 55: "Coney Island", 59: "Jackson Heights", 60: "East Brooklyn", 61: "Maspeth", 62: "Flatbush", 63: "Glendale", 64: "Country Club", 65: "Harlem", 66: "Midtown", 67: "Queensboro Hill", 68: "Tribeca", 69: "Springfield Gardens", 80: "Carroll Gardens", 70: "Steinway", 71: "North Sutton Area", 72: "Upper West Side", 73: "Williamsburg", 74: "Flushing", 78: "Astoria-Long Island City", 75: "City Island", 76: "Saintalbans", 77: "The Rockaways", 79: "Gravesend-Sheepshead Bay", 81: "Financial District", 82: "Bedford Park", 83: "Hunts Point", 84: "Inwood", 85: "Sunny Side", 86: "Chelsea", 87: "Forest Hills", 92: "Brownsville", 88: "Wakefield-Williamsbridge", 89: "Ridgewood", 90: "Clearview", 91: "Washington Heights", 93: "Bushwick", 94: "Fort Green", 95: "Clinton", 96: "Woodlawn-Nordwood", 97: "High Bridge", 98: "Riverdale", 99: "Eastchester", 100: "Tremont", 101: "Howard Beach", 102: "Utopia", 103: "Parkchester", 104: "Bayside", 105: "Corona"};
-         var demo_mode_weather = null;
+         var demo_mode_weather = {"1": {"3_5": "Unnormal", "6_8": "Unnormal", "9_11": "Unnormal", "18_20": "Unnormal", "15_17": "Unnormal", "21_23": "Normal", "0_2": "Normal", "12_14": "Unnormal"}, "3": {"3_5": "Normal", "6_8": "Normal", "9_11": "Normal", "18_20": "Normal", "15_17": "Unnormal", "21_23": "Unnormal", "0_2": "Normal", "12_14": "Normal"}, "2": {"3_5": "Normal", "6_8": "Normal", "9_11": "Normal", "18_20": "Unnormal", "15_17": "Normal", "21_23": "Unnormal", "0_2": "Normal", "12_14": "Normal"}, "5": {"3_5": "Normal", "6_8": "Normal", "9_11": "Unnormal", "18_20": "Normal", "15_17": "Unnormal", "21_23": "Normal", "0_2": "Normal", "12_14": "Unnormal"}, "4": {"3_5": "Unnormal", "6_8": "Normal", "9_11": "Normal", "18_20": "Normal", "15_17": "Normal", "21_23": "Normal", "0_2": "Unnormal", "12_14": "Unnormal"}, "7": {"3_5": "Normal", "6_8": "Unnormal", "9_11": "Unnormal", "18_20": "Normal", "15_17": "Unnormal", "21_23": "Normal", "0_2": "Normal", "12_14": "Unnormal"}, "6": {"3_5": "Normal", "6_8": "Normal", "9_11": "Unnormal", "18_20": "Normal", "15_17": "Normal", "21_23": "Normal", "0_2": "Normal", "12_14": "Normal"}};
+         /* ($.ajax({
+            url: '../assets/anomaly_weather.json',
+            success: function (data) {
+            demo_mode_weather = data;
+            },
+            error: alert('error')
+            })); */
+
          var sublayers = [];
          var weather = null;
          var dayofweek = null;
@@ -187,12 +195,6 @@
 	         console.log(err);
 	     });
 
-             ($.ajax({
-                 url: '../assets/anomaly_weather.json',
-                 success: function (data) {
-                     demo_mode_weather = data;
-                 }
-             }));
 
              var LayerActions = {
                  weather_good: function() {
@@ -288,7 +290,7 @@
 	         LayerActions[$(this).attr('id')]();
                  if (demomode) {
                      sublayers[0].setCartoCSS(base_css.replace(/=/g, '_'+dayofweek+'_'+timeofday+'='));
-                     weather = demo_mode_weather["Financial District"][dayofweek][timeofday];
+                     weather = demo_mode_weather[dayofweek][timeofday];
                  };
 	     });
 
