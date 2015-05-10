@@ -1,4 +1,4 @@
-How to use the Interactive map.
+##How to use the Interactive map.
 
 The final presentation of our analysis in the form of a website is hosted on Amazon Web Services at http://big-data-project-env-nwg6zhjxp8.elasticbeanstalk.com/. You may also find the source code for both the website and data analysis procedure at our Github repository.
 
