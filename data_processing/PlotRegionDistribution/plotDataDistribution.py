@@ -12,7 +12,10 @@ import datetime
 from matplotlib import rc
 from matplotlib.font_manager import FontProperties
 
-font = FontProperties(fname=r"/System/Library/Fonts/HelveticaNeue.dfont", size=12)
+font = FontProperties(fname=r"/System/Library/Fonts/Helvetica.dfont", size=14)
+numFont = FontProperties(fname=r"/System/Library/Fonts/Helvetica.dfont", size=16)
+log = open("log.txt", "w")
+
 
 def readData(fileName):
     '''Read pickup data from a data structure file named fileName'''
@@ -25,215 +28,169 @@ def readData(fileName):
     return data
 
 
-def plotRegionDistribution(puData, doData, weatherData, region, week, targetHour):
+def plotTaxiTrafficDistribution(data, weatherData, region, week, targetHour):
     """plot the pickup distribution according to specific week and hour"""
-    pickupData = puData[region][week]
-    dropoffData = doData[region][week]
-    puNormalDistribution = []
-    puUnnormalDistribution = []
-    doNormalDistribution = []
-    doUnnormalDistribution = []
-    for weekNumber in range(52):
-        if weekNumber < 10:
-            weekNumber = "0" + str(weekNumber)
-        else:
-            weekNumber = str(weekNumber)
-        d = "2013-W" + weekNumber + "-" + str(week)
-        r = datetime.datetime.strptime(d, "%Y-W%W-%w")
-        date = "2013-"
-        if r.month < 10:
-            date += "0" + str(r.month) + "-"
-        else:
-            date += str(r.month) + "-"
-
-        if r.day < 10:
-            date += "0" + str(r.day) + "-"
-        else:
-            date += str(r.day) + "-"
-
-        if targetHour < 10:
-            date += "0" + str(targetHour) 
-        else:
-            date += str(targetHour)
-        weather = weatherData[date]
-        
+    if region not in data:
+        return
+    if week not in data[region]:
+        return
+    total_data = data[region][week]
+    NormalDistribution = []
+    UnnormalDistribution = []
+    for weekNumber in range(54):
+        totalDate = []
+        for hour in targetHour:
+            for i in range(1, 4):
+                if weekNumber < 10:
+                    weekNumber = "0" + str(weekNumber)
+                else:
+                    weekNumber = str(weekNumber)
+                d = "201" + str(i) + "-W" + weekNumber + "-" + str(1)
+                try:
+                    r = datetime.datetime.strptime(d, "%Y-W%W-%w")
+                except:
+                    log.write("date %s %d %d\n" % (region, week, targetHour[0]))
+                date = "201" + str(i) + "-"
+                if r.month < 10:
+                    date += "0" + str(r.month) + "-"
+                else:
+                    date += str(r.month) + "-"
+                if r.day < 10:
+                    date += "0" + str(r.day) + "-"
+                else:
+                    date += str(r.day) + "-"
+                if hour < 10:
+                    date += "0" + str(hour)
+                else:
+                    date += str(hour)
+                totalDate.append(date)
         try:
-            if weather == "Normal":
-                puNormalDistribution.append(pickupData[weekNumber][targetHour])
-                doNormalDistribution.append(dropoffData[weekNumber][targetHour])
+            unnormalCount = 0
+            for date in totalDate:
+                if str(date) in weatherData:
+                    if weatherData[date] == "Unnormal":
+                        unnormalCount += 1
+            if unnormalCount > 0:
+                weather = "Unnormal"
             else:
-                puUnnormalDistribution.append(pickupData[weekNumber][targetHour])
-                doUnnormalDistribution.append(dropoffData[weekNumber][targetHour])
-        except:
-            pass
-    
-    maxNumPuNormal = max(puNormalDistribution)
-    minNumPuNormal = min(puNormalDistribution)
-    maxNumDoNormal = max(doNormalDistribution)
-    minNumDoNormal = min(doNormalDistribution)
-    maxNumNormal = max(maxNumPuNormal, maxNumDoNormal)
-    minNumNormal = min(minNumPuNormal, minNumDoNormal)
-   
-    maxNumPuUnnormal = max(puUnnormalDistribution)
-    minNumPuUnnormal = min(puUnnormalDistribution)
-    maxNumDoUnnormal = max(doUnnormalDistribution)
-    minNumDoUnnormal = min(doUnnormalDistribution)
-    maxNumUnnormal = max(maxNumPuUnnormal, maxNumDoUnnormal)
-    minNumUnnormal = min(minNumPuUnnormal, minNumDoUnnormal)
+                weather = "Normal"
+                        
+            if weather == "Normal":
+                for hour in targetHour:
+                    NormalDistribution.append(total_data[weekNumber][hour])
+            else:
+                for hour in targetHour:
+                    UnnormalDistribution.append(total_data[weekNumber][hour])
+        except Exception:
+            log.write("weather %s %d %d\n" % (region, week, targetHour[0]))
+    try: 
+        maxNumNormal = max(NormalDistribution)
+        minNumNormal = min(NormalDistribution)
+
+        maxNumUnnormal = max(UnnormalDistribution)
+        minNumUnnormal = min(UnnormalDistribution)
+
+    except Exception:
+        log.write("Min-max null list problem %s %d %d\n" % (region, week, targetHour[0])
+
+    try: 
+        bucketSizeNormal = (maxNumNormal - minNumNormal) / 9
+        numNormalDistribution = {}
+        for num in NormalDistribution:
+            k = (num - minNumNormal) / bucketSizeNormal
+            if k > 9:
+                k = 9
+            if (minNumNormal + k * bucketSizeNormal) in numNormalDistribution:
+                numNormalDistribution[minNumNormal + k * bucketSizeNormal] += 1
+            else:
+                numNormalDistribution[minNumNormal + k * bucketSizeNormal] = 1
+        for i in range(10):
+            if minNumNormal + i * bucketSizeNormal not in numNormalDistribution:
+                numNormalDistribution[minNumNormal + i * bucketSizeNormal] = 0
+
+        numNormalDistribution = collections.OrderedDict(sorted(numNormalDistribution.items()))
+
+        bucketSizeUnnormal = (maxNumUnnormal - minNumUnnormal) / 9
+        numUnnormalDistribution = {}
+        for num in UnnormalDistribution:
+            k = (num - minNumUnnormal) / bucketSizeUnnormal
+            if k > 9:
+                k = 9
+            if (minNumUnnormal + k * bucketSizeUnnormal) in numUnnormalDistribution:
+                numUnnormalDistribution[minNumUnnormal + k * bucketSizeUnnormal] += 1
+            else:
+                numUnnormalDistribution[minNumUnnormal + k * bucketSizeUnnormal] = 1
+        for i in range(10):
+            if minNumUnnormal + i * bucketSizeUnnormal not in numUnnormalDistribution:
+                numUnnormalDistribution[minNumUnnormal + i * bucketSizeUnnormal] = 0
+        numUnnormalDistribution = collections.OrderedDict(sorted(numUnnormalDistribution.items()))
+
+        dfNormal = pd.DataFrame(data=numNormalDistribution, index=range(1))
+        dfUnnormal = pd.DataFrame(data=numUnnormalDistribution, index=range(1, 2))
+
+        XNormal = np.arange(len(numNormalDistribution))
+        XUnnormal = np.arange(len(numUnnormalDistribution))
+
+        plt.figure()
+        rect1 = plt.bar(XNormal, numNormalDistribution.values(), alpha=0.5, 
+            color='#5fafff', align='center', width=1, label='Normal Weather')
+        autolabel(rect1)
 
 
-    bucketSizeNormal = (maxNumNormal - minNumNormal) / 9
-    numNormalDistribution = {}
-    for num in puNormalDistribution:
-        k = (num - minNumNormal) / bucketSizeNormal
-        if k > 9:
-            k = 9
-        if (minNumNormal + k * bucketSizeNormal) in numNormalDistribution:
-            numNormalDistribution[minNumNormal + k * bucketSizeNormal] += 1
-        else:
-            numNormalDistribution[minNumNormal + k * bucketSizeNormal] = 1
-    for i in range(10):
-        if minNumNormal + i * bucketSizeNormal not in numNormalDistribution:
-            numNormalDistribution[minNumNormal + i * bucketSizeNormal] = 0
-    
-    for num in doNormalDistribution:
-        k = (num - minNumNormal) / bucketSizeNormal
-        if k > 9:
-            k = 9
-        if (minNumNormal + k * bucketSizeNormal) in numNormalDistribution:
-            numNormalDistribution[minNumNormal + k * bucketSizeNormal] += 1
-        else:
-            numNormalDistribution[minNumNormal + k * bucketSizeNormal] = 1
-    for i in range(10):
-        if minNumNormal + i * bucketSizeNormal not in numNormalDistribution:
-            numNormalDistribution[minNumNormal + i * bucketSizeNormal] = 0
-    numNormalDistribution = collections.OrderedDict(sorted(numNormalDistribution.items()))
-    
-    bucketSizeUnnormal = (maxNumUnnormal - minNumUnnormal) / 9
-    numUnnormalDistribution = {}
-    for num in puUnnormalDistribution:
-        k = (num - minNumUnnormal) / bucketSizeUnnormal
-        if k > 9:
-            k = 9
-        if (minNumUnnormal + k * bucketSizeUnnormal) in numUnnormalDistribution:
-            numUnnormalDistribution[minNumUnnormal + k * bucketSizeUnnormal] += 1
-        else:
-            numUnnormalDistribution[minNumUnnormal + k * bucketSizeUnnormal] = 1
-    for i in range(10):
-        if minNumUnnormal + i * bucketSizeUnnormal not in numUnnormalDistribution:
-            numUnnormalDistribution[minNumUnnormal + i * bucketSizeUnnormal] = 0
-    
-    for num in doUnnormalDistribution:
-        k = (num - minNumUnnormal) / bucketSizeUnnormal
-        if k > 9:
-            k = 9
-        if (minNumUnnormal + k * bucketSizeUnnormal) in numUnnormalDistribution:
-            numUnnormalDistribution[minNumUnnormal + k * bucketSizeUnnormal] += 1
-        else:
-            numUnnormalDistribution[minNumUnnormal + k * bucketSizeUnnormal] = 1
-    for i in range(10):
-        if minNumUnnormal + i * bucketSizeUnnormal not in numUnnormalDistribution:
-            numUnnormalDistribution[minNumUnnormal + i * bucketSizeUnnormal] = 0
-    numUnnormalDistribution = collections.OrderedDict(sorted(numUnnormalDistribution.items()))
-    
-    dfNormal = pd.DataFrame(data=numNormalDistribution, index=range(1))
-    dfUnnormal = pd.DataFrame(data=numUnnormalDistribution, index=range(1, 2))
+        maxValue = max(numNormalDistribution.values())
 
-    XNormal = np.arange(len(numNormalDistribution))
-    XUnnormal = np.arange(len(numUnnormalDistribution))
+        XticksNormal = []
+        XticksUnnormal = []
+        for i in range(9):
+            sNormal = str(minNumNormal + i * bucketSizeNormal) + "~" + str(minNumNormal + (i + 1) * bucketSizeNormal - 1)
+            sUnnormal = str(minNumUnnormal + i * bucketSizeUnnormal) + "~" + str(minNumUnnormal + (i + 1) * bucketSizeUnnormal - 1)
+            XticksNormal.append(sNormal)
+            XticksUnnormal.append(sUnnormal)
+        XticksNormal.append("> " + str(minNumNormal + 9 * bucketSizeNormal - 1))
+        XticksUnnormal.append("> " + str(minNumUnnormal + 9 * bucketSizeUnnormal - 1))
+        plt.xticks(XNormal, XticksNormal, fontproperties=font, rotation=30, fontsize=12)
 
-    rect1 = plt.bar(XNormal, numNormalDistribution.values(), alpha=0.5, 
-        color='#5fafff', align='center', width=1, label='Normal Weather')
-    autolabel(rect1)
-    
-    XticksNormal = []
-    XticksUnnormal = []
-    for i in range(9):
-        sNormal = str(minNumNormal + i * bucketSizeNormal) + "~" + str(minNumNormal + (i + 1) * bucketSizeNormal - 1)
-        sUnnormal = str(minNumUnnormal + i * bucketSizeUnnormal) + "~" + str(minNumUnnormal + (i + 1) * bucketSizeUnnormal - 1)
-        XticksNormal.append(sNormal)
-        XticksUnnormal.append(sUnnormal)
-    XticksNormal.append("> " + str(minNumNormal + 9 * bucketSizeNormal - 1))
-    XticksUnnormal.append("> " + str(minNumUnnormal + 9 * bucketSizeUnnormal - 1))
-    plt.xticks(XNormal, XticksNormal, fontproperties=font, fontsize=8)
-    plt.xlabel("Taxi Traffic Count Range", fontproperties=font)
-    plt.ylabel("Number of Times", fontproperties=font)
-    plt.title("Taxi Traffic Distribution", y=1.04, fontproperties=font)
-    plt.legend(prop=font)
-    
-    if len(region.split(" ")) > 1:
-        region = region.replace(" ", "_")
-    
-    plt.savefig("%s_Normal_%d_%d.png" % (region, week, targetHour))
-    
-    plt.figure()
-    rect2 = plt.bar(XUnnormal, numUnnormalDistribution.values(), alpha=0.5, 
-        color='#5fafff', align='center', width=1, label='Unnormal Weather')
-    autolabel(rect2)
-    plt.xticks(XUnnormal, XticksUnnormal, fontproperties=font, fontsize=8)
-    plt.xlabel("Taxi Traffic Count Range", fontproperties=font)
-    plt.ylabel("Number of Times", fontproperties=font)
-    plt.title("Taxi Traffic Distribution", y=1.04, fontproperties=font)
-    plt.legend(prop=font)
-    
-    plt.savefig("%s_Unnormal_%d_%d.png" % (region, week, targetHour))
+        y = np.arange(0, int(maxValue * 1.2) + 3, int(maxValue * 1.2) / 4)
+        plt.yticks(y, fontproperties=font)
+
+        if len(region.split(" ")) > 1:
+            region = region.replace(" ", "_")
+
+        plt.savefig("pic/%s_Normal_%d_%d_%d.png" % (region, week, targetHour[0], targetHour[-1]), bbox_inches='tight')
+        plt.figure()
+        rect2 = plt.bar(XUnnormal, numUnnormalDistribution.values(), alpha=0.5, 
+            color='#5fafff', align='center', width=1, label='Unnormal Weather')
+        maxUnValue = max(numUnnormalDistribution.values())
+        autolabel(rect2)
+        y = np.arange(0, int(maxUnValue * 1.2) + 3, int(maxUnValue * 1.2) / 4)
+        plt.xticks(XUnnormal, XticksUnnormal, fontproperties=font, rotation=30, fontsize=12)
+        plt.yticks(y, fontproperties=font)
+        plt.savefig("pic/%s_Unnormal_%d_%d_%d.png" % (region, week, targetHour[0], targetHour[-1]), bbox_inches='tight')
+    except:
+        log.write("plot problem %s %d %d\n" % (region, week, targetHour[0]))
+
 
 def autolabel(rect):
     '''Add text label to every column in the bar plot''' 
-    
+    max = 0
+    for i in range(len(rect)):
+        if rect[i].get_height() > max:
+            max = rect[i].get_height()
     for i in range(len(rect)):
         height = rect[i].get_height()
-        plt.text(rect[i].get_x()+rect[i].get_width()/4., 0.1 + height, '%d' %int(height), fontproperties=font)
+        if height == 0:
+            continue
+        plt.text(rect[i].get_x()+rect[i].get_width()/4., max * 0.02 + height, '%d' %int(height), fontproperties=numFont)
     return 
-
-
-def getDataFromATimePeriod(region, startMonth, startDay, startHour, endMonth, endDay, endHour, data):
-    """
-    show the distribution of pickup data from a specific time period
-
-    @para region:                           The region which you want to see the distribution in.
-          startMonth, startDay, startHour:  The time period starts at the startMonth, startDay, startHour. For example, March, 3th, 3:00.
-          endMonth,   endDay,   endHour:    The time period ends at the endMonth, endDay, endHour. For example, March, 4th, 18:00.
-          data:                             The day can be pick up data or drop off data.
-                                            The format of the data is a nested dictionary: {region:{month:{day:{hour: count}}}}
-                                            month ranges from 1-12
-                                            hour ranges from 0-23
-    """
-    regionData = data[region]
-    dataList = []
-    for month in range(startMonth, endMonth + 1):
-        if month == startMonth:
-            for day in regionData[month]:
-                if day == startDay:
-                    for hour in regionData[month][day]:
-                        if hour >= startHour:
-                            dataList.append(regionData[month][day][hour])
-                elif day > startDay:
-                    for hour in regionData[month][day]:
-                        dataList.append(regionData[month][day][hour])
-        elif month == endMonth:
-            for day in regionData[month]:
-                if day == endDay:
-                    for hour in regionData[month][day]:
-                        if hour <= endHour:
-                            dataList.append(regionData[month][day][hour])
-                elif day < endDay:
-                    for hour in regionData[month][day]:
-                        dataList.append(regionData[month][day][hour])
-        elif month > startMonth and month < endMonth:
-            for day in regionData[month]:
-                for hour in regionData[month][day]:
-                    dataList.append(regionData[month][day][hour])
-    X = np.arange(len(dataList))
-    plt.plot(X, dataList)
-    plt.title("pickup number distribution")
-    plt.savefig("dist.png")
 
 
 if __name__ == "__main__":
     weatherData = readData("weatherData.pkl")
-    puData = readData("puWeekdayData.pkl")
-    doData = readData("doWeekdayData.pkl")
-    plotRegionDistribution(puData, doData, weatherData, "Sunny Side", 2, 13)
-    # tripData = readData("puData.pkl")
-    # getDataFromATimePeriod("Chinatown", 2, 4, 5, 2, 9, 22, tripData)
+    data = readData("WeekdayData.pkl")
+    regions = data.keys()
+    for region in regions:
+        for week in range(1, 8):
+            for hour in [[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11], [12, 13, 14], [15, 16, 17], [18, 19, 20], [21, 22, 23]]:
+                print "============generating %s  weekday %d  hour %d's picture============"%(region, week, hour[0])
+                plotRegionDistribution(data, weatherData, region, week, hour)
+                print "============%s  weekday %d  hour %d's picture has been generated============"%(region, week, hour[0])
