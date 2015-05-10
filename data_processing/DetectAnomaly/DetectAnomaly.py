@@ -140,7 +140,7 @@ def detectAnomaly(data, threshold_data, weatherData, region):
 if __name__ == '__main__':
     data = readData("decData.pkl")
     weatherdata = readData("weatherLastWeek.pkl")
-    threshold_data = readData("anomaly.pkl")
+    threshold_data = readData("threshold.pkl")
     regions = readData("WeekdayData.pkl").keys()
     detectAnomaly(data, threshold_data, weatherdata, regions)
     anomal = readData("anomalyData.pkl")
