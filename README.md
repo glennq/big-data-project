@@ -1,4 +1,5 @@
-# big-data-project
+## Analysis and Visualization of NYC Taxi Data to Find Unusually Busy Areas ##
+
 This is the repository for course project of DS-GA 1004 Big Data.
 
 Team members:
