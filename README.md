@@ -2,7 +2,7 @@
 
 This is the repository for course project of DS-GA 1004 Big Data.
 
-An online demonstration is hosted at: http://big-data-project-env-nwg6zhjxp8.elasticbeanstalk.com/
+An online demonstration is accessible at:  http://glennq.github.io/big-data-project/overview.html
 
 Team members:
 
